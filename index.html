@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeBitcoInHack</title> <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blood-red: #8b0000;
+            --neon-red: #ff0000;
+            --dark-bg: #050505;
+            --glass-bg: rgba(20, 0, 0, 0.9);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at center, #1a0000 0%, #000 100%);
+            color: #e0e0e0;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background: var(--glass-bg);
+            border: 1px solid var(--blood-red);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-red);
+            font-size: 1.3rem;
+            text-shadow: 0 0 10px var(--blood-red);
+            margin-bottom: 20px;
+            text-transform: ;
+        }
+
+        .dashboard {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--neon-red);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat span { font-size: 10px; color: #888; display: block; text-transform: ; }
+        .stat b { font-size: 14px; color: #fff; }
+
+        input#double_your_btc_stake {
+            background: transparent;
+            border: none;
+            color: var(--neon-red);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .status-box {
+            height: 60px;
+            background: #000;
+            border: 1px solid #300;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #555;
+            text-transform: ;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .main-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: ;
+        }
+
+        #start-btn { background: var(--blood-red); color: white; }
+        #stop-btn { background: #1a1a1a; color: #666; border: 1px solid #333; }
+
+        #start-btn:hover { background: var(--neon-red); box-shadow: 0 0 15px var(--neon-red); }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 1px solid #200;
+            padding-top: 15px;
+            width: 100%;
+        }
+
+        .footer-name {
+            color: var(--neon-red);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px var(--blood-red);
+        }
+
+        /* Hidden Triggers */
+        #double_your_btc_bet_win, #double_your_btc_bet_lose, #double_your_btc_bet_lo_button, #double_your_btc_bet_hi_button {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>FreeBitcoInHack</h1>
+        
+        <div class="dashboard">
+            <div class="stat">
+                <span>Balance (BTC)</span>
+                <b id="balance">0.00050000</b>
+            </div>
+            <div class="stat">
+                <span>Stake</span>
+                <input type="text" id="double_your_btc_stake" value="0.00000001" readonly>
+            </div>
+        </div>
+
+        <div id="status-display" class="status-box">Ready to Initialize</div>
+
+        <div class="btn-group">
+            <button id="start-btn" class="main-btn">Start Game</button>
+            <button id="stop-btn" class="main-btn">Stop Script</button>
+        </div>
+
+        <div id="double_your_btc_bet_win"></div>
+        <div id="double_your_btc_bet_lose"></div>
+        <button id="double_your_btc_bet_lo_button"></button>
+        <button id="double_your_btc_bet_hi_button"></button>
+    </div>
+
+    <footer>
+        <div style="font-size: 20px; color: #444; margin-bottom: 3px;">FreeBitcoInHack</div>
+        Developed By
+<div class="footer-name">Humayun Shariar Himu</div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // --- ALL YOUR PROVIDED LOGIC ---
+        var startValue = '0.00000001', 
+            stopPercentage = 0.001, 
+            maxWait = 500, 
+            stopped = false, 
+            stopBefore = 3;
+
+        var $loButton = $('#double_your_btc_bet_lo_button'), 
+            $hiButton = $('#double_your_btc_bet_hi_button');
+
+        function multiply(){
+            var current = $('#double_your_btc_stake').val();
+            var multiplyVal = (current * 2).toFixed(8);
+            $('#double_your_btc_stake').val(multiplyVal);
+        }
+
+        function getRandomWait(){
+            var wait = Math.floor(Math.random() * maxWait ) + 100;
+            console.log('Waiting for ' + wait + 'ms before next bet.');
+            return wait ;
+        }
+
+        function reset(){
+            $('#double_your_btc_stake').val(startValue);
+        }
+
+        function deexponentize(number){
+            return number * 1000000;
+        }
+
+        function iHaveEnoughMoni(){
+            var balance = deexponentize(parseFloat($('#balance').text()));
+            var current = deexponentize($('#double_your_btc_stake').val());
+            return ((balance*2)/100) * (current*2) > stopPercentage/100;
+        }
+
+        function stopBeforeRedirect(){
+            var minutes = parseInt($('title').text());
+            if( minutes < stopBefore ) {
+                console.log('Approaching redirect! Stop the game.');
+                stopGame();
+                return true;
+            }
+            return false;
+        }
+
+        function stopGame(){
+            console.log('Game will stop soon! Let me finish.');
+            stopped = true;
+            $('#status-display').text('Stopping Soon...').css('color', 'yellow');
+        }
+
+        function startGame(){
+            console.log('Game started!');
+            stopped = false;
+            reset();
+            $('#status-display').text('Engine Running').css('color', '#00ff41');
+            $loButton.trigger('click');
+        }
+
+        // --- SIMULATED GAME ENGINE (To handle click triggers) ---
+        $loButton.click(function() {
+            if(stopped) return;
+            // Simulating a 48% win chance
+            setTimeout(() => {
+                let win = Math.random() > 0.52;
+                let stake = parseFloat($('#double_your_btc_stake').val());
+                let bal = parseFloat($('#balance').text());
+                
+                if(win) {
+                    $('#balance').text((bal + stake).toFixed(8));
+                    $('#double_your_btc_bet_win').html('win').trigger('DOMSubtreeModified');
+                } else {
+                    $('#balance').text((bal - stake).toFixed(8));
+                    $('#double_your_btc_bet_lose').html('lose').trigger('DOMSubtreeModified');
+                }
+            }, 200);
+        });
+
+        // --- BINDINGS ---
+        $('#double_your_btc_bet_lose').unbind().bind("DOMSubtreeModified", function(event){
+            if( $(event.currentTarget).is(':contains("lose")') ) {
+                $(event.currentTarget).html(''); // Clear
+                console.log('You LOST! Multiplying...');
+                $('#status-display').text('Loss: Multiplying').css('color', '#ff0000');
+                multiply();
+                setTimeout(function(){
+                    $loButton.trigger('click');
+                }, getRandomWait());
+            }
+        });
+
+        $('#double_your_btc_bet_win').unbind().bind("DOMSubtreeModified", function(event){
+            if( $(event.currentTarget).is(':contains("win")') ) {
+                $(event.currentTarget).html(''); // Clear
+                if( stopBeforeRedirect() ) { return; }
+                
+                if( iHaveEnoughMoni() ) {
+                    console.log('You WON! Restarting!');
+                    $('#status-display').text('Win: Resetting').css('color', '#00ff41');
+                    reset();
+                    if( stopped ) { stopped = false; return false; }
+                } else {
+                    console.log('You WON! Betting again');
+                    $('#status-display').text('Win: Continuing').css('color', '#00ff41');
+                }
+                
+                setTimeout(function(){
+                    $loButton.trigger('click');
+                }, getRandomWait());
+            }
+        });
+
+        // UI Buttons
+        $('#start-btn').click(function() { startGame(); });
+        $('#stop-btn').click(function() { stopGame(); });
+
+    </script>
+</body>
+</html>
